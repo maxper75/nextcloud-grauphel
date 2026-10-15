@@ -11,7 +11,7 @@
   <a class="button" href="<?php echo p($_['links']['json']); ?>">JSON</a>
   <a class="button" href="<?php echo p($_['links']['xml']); ?>">XML</a>
  </div>
- <h1><?php echo ($_['note']->title); ?></h1>
+ <h1><?php p(htmlspecialchars_decode($_['note']->title, ENT_QUOTES | ENT_HTML5)); ?></h1>
  <p class="muted">
   Last modified:
   <?php p($_['date']->formatDate(strtotime($_['note']->{'last-change-date'}))); ?>

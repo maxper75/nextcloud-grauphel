@@ -55,11 +55,10 @@ class TokenController extends Controller
      * DELETE /tokens/$username/$tokenKey
      *
      * @NoAdminRequired
-     * @NoCSRFRequired
      */
     public function delete($username, $tokenKey)
     {
-        if (false && ($this->user === null || $this->user->getUid() != $username)) {
+        if ($this->user === null || $this->user->getUid() != $username) {
             $res = new ErrorResponse('You may only delete your own tokens.');
             $res->setStatus(\OCP\AppFramework\Http::STATUS_FORBIDDEN);
             return $res;
@@ -92,7 +91,6 @@ class TokenController extends Controller
      * POST /tokens/$username/$tokenKey
      *
      * @NoAdminRequired
-     * @NoCSRFRequired
      */
     public function deletePost($username, $tokenKey)
     {

@@ -60,6 +60,7 @@ OC.grauphel = {
         jQuery.ajax({
             url:   task.url,
             type:  task.method,
+            headers: {requesttoken: OC.requestToken},
             async: async
         });
     },
