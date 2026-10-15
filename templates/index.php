@@ -7,7 +7,7 @@
   <div>
     <h1>grauphel - Tomboy notes server</h1>
     <p>
-      <a class="lined" href="http://apps.owncloud.com/content/show.php?action=content&amp;content=166654">Grauphel</a>
+      <a class="lined" href="https://apps.nextcloud.com/apps/grauphel">Grauphel</a>
       is a server to store and synchronize notes from Tomboy and compatible clients.
     </p>
     <p>

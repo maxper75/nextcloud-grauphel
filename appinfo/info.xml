@@ -19,15 +19,15 @@
  <repository type="git">https://github.com/grosjo/nextcloud-grauphel.git</repository>
  <dependencies>
   <php min-version="8.1"/>
-  <nextcloud min-version="30" max-version="34"/>
+  <nextcloud min-version="32" max-version="34"/>
  </dependencies>
     <navigations>
         <navigation>
             <id>grauphel</id>
             <name>Tomboy notes</name>
             <route>grauphel.gui.index</route>
-            <order>2342</order>
             <icon>app.svg</icon>
+            <order>2342</order>
             <type>link</type>
         </navigation>
     </navigations>

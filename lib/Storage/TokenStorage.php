@@ -90,7 +90,7 @@ class TokenStorage
      * @param string $type     Token type: temp, access, verify
      * @param string $tokenKey Random token string to load
      *
-     * @return OAuth_Token Stored token
+     * @return Token Stored token
      *
      * @throws OAuthException When token does not exist
      */
@@ -112,7 +112,7 @@ class TokenStorage
      * @param string $type     Token type: temp, access, verify
      * @param string $tokenKey Random token string to load
      *
-     * @return OAuth_Token Stored token
+     * @return Token Stored token
      *
      * @throws OAuthException When token does not exist or it is invalid
      */

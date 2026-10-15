@@ -227,7 +227,7 @@ class NoteStorage
      * @param string  $guid      Note identifier
      * @param boolean $createNew Create a new note if it does not exist
      *
-     * @return object Note object, NULL if !$createNew and note does not exist
+     * @return object|null Note object, NULL if !$createNew and note does not exist
      */
     public function load($guid, $createNew = true)
     {
@@ -278,7 +278,7 @@ class NoteStorage
      *
      * @param string $title Note title.
      *
-     * @return string GUID, NULL if note could not be found
+     * @return string|null GUID, NULL if note could not be found
      */
     public function loadGuidByTitle($title)
     {
