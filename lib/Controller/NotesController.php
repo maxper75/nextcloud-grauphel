@@ -14,10 +14,11 @@
 namespace OCA\Grauphel\Controller;
 
 use \OCP\AppFramework\Controller;
+use \OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use \OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCA\Grauphel\Auth\Client;
-use \OCA\Grauphel\Tools\Dependencies;
-use \OCA\Grauphel\Storage\TokenStorage;
+use \OCA\Grauphel\Storage\NoteStorage;
 use \OCA\Grauphel\Response\ErrorResponse;
 
 /**
@@ -39,26 +40,23 @@ class NotesController extends Controller
      * @param string   $appName Name of the app
      * @param IRequest $request Instance of the request
      */
+    protected $user;
+    protected NoteStorage $notes;
+
     public function __construct(
         $appName, \OCP\IRequest $request,
-        \OCP\IUserSession $userSession, \OCP\IURLGenerator $urlGen
+        \OCP\IUserSession $userSession, NoteStorage $notes
     ) {
         parent::__construct($appName, $request);
-        $user = $userSession->getUser();
-        Dependencies::get()->urlGen = $urlGen;
-        $this->user = $user;
-        $this->deps = Dependencies::get();
-
-        //default http header: we assume something is broken
-        header('HTTP/1.0 500 Internal Server Error');
+        $this->user  = $userSession->getUser();
+        $this->notes = $notes;
     }
 
     /**
      * Output a note as a standalone HTML file
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
     public function html($guid)
     {
         $note = $this->getNotes()->load($guid, false);
@@ -153,10 +151,9 @@ class NotesController extends Controller
 
     /**
      * Output a note as a standalone text file
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
     public function text($guid)
     {
         $note = $this->getNotes()->load($guid, false);
@@ -194,10 +191,9 @@ class NotesController extends Controller
      * Output a note in tomboy XML format
      *
      * @link https://wiki.gnome.org/Apps/Tomboy/NoteXmlFormat
-     *
-     * @NoAdminRequired
-     * @NoCSRFRequired
      */
+    #[NoAdminRequired]
+    #[NoCSRFRequired]
     public function xml($guid)
     {
         $note = $this->getNotes()->load($guid, false);
@@ -243,10 +239,9 @@ class NotesController extends Controller
 
     protected function getNotes()
     {
-        $username = $this->user->getUid();
-        $notes  = new \OCA\Grauphel\Lib\NoteStorage($this->deps->urlGen);
+        $username = $this->user->getUID();
+        $notes  = $this->notes;
         $notes->setUsername($username);
         return $notes;
     }
 }
-?>

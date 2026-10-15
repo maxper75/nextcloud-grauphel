@@ -19,11 +19,14 @@ class Provider implements IProvider
 {
     private IL10N $l10n;
     private IURLGenerator $urlGen;
+    private NoteStorage $notes;
 
-    public function __construct(IL10N $l10n, IURLGenerator $urlGen)
-    {
+    public function __construct(
+        IL10N $l10n, IURLGenerator $urlGen, NoteStorage $notes
+    ) {
         $this->l10n   = $l10n;
         $this->urlGen = $urlGen;
+        $this->notes  = $notes;
     }
 
     public function getId(): string
@@ -46,7 +49,7 @@ class Provider implements IProvider
 
     public function search(IUser $user, ISearchQuery $query): SearchResult
     {
-        $notes = new NoteStorage($this->urlGen);
+        $notes = $this->notes;
         $notes->setUsername($user->getUID());
 
         $qp = new QueryParser();

@@ -38,4 +38,3 @@ class UrlHelper
         return $url . $sep . implode('&', $parts);
     }
 }
-?>
