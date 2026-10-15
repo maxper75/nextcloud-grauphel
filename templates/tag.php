@@ -4,7 +4,6 @@
 <?php $_['appNavigation']->printPage(); ?>
 
 <div id="app-content" class="list">
-  <div id="searchresults" class="hidden"></div>
   <h1>Notebook: <?php p($_['tag']); ?></h1>
 
   <table class="table" id="grauphel-notes">

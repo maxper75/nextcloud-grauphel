@@ -4,7 +4,6 @@
 <?php $_['appNavigation']->printPage(); ?>
 
 <div id="app-content" class="content">
-  <div id="searchresults" class="hidden"></div>
   <h1>Manage database</h1>
   <p>
     In case something went seriously wrong during synchronization, you may reset your
@@ -29,7 +28,7 @@
   <p>
    To reset the database, enter your user name and click "reset database":
   </p>
-  <form method="POST" action="<?php p(OC::$server->getURLGenerator()->linkToRoute('grauphel.gui.databaseReset')); ?>">
+  <form method="POST" action="<?php p($_['urlGen']->linkToRoute('grauphel.gui.databaseReset')); ?>">
     <input type="hidden" name="requesttoken" value="<?php p($_['requesttoken']) ?>"/>
     <p>
      <label>Username: <input type="text" name="username" value="" autocomplete="off" /></label>
