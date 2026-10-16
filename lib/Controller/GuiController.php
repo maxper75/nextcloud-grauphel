@@ -20,7 +20,6 @@ use \OCP\AppFramework\Http\Attribute\PublicPage;
 use \OCP\AppFramework\Http\TemplateResponse;
 use \OCP\IDateTimeFormatter;
 use \OCP\IURLGenerator;
-use \OCP\Template\ITemplateManager;
 use \OCA\Grauphel\Storage\NoteStorage;
 use \OCA\Grauphel\Storage\TokenStorage;
 
@@ -46,21 +45,19 @@ class GuiController extends Controller
     protected $user;
     protected IURLGenerator $urlGen;
     protected IDateTimeFormatter $dateFormatter;
-    protected ITemplateManager $templateManager;
     protected NoteStorage $notes;
     protected TokenStorage $tokens;
 
     public function __construct(
         $appName, \OCP\IRequest $request,
         \OCP\IUserSession $userSession, IURLGenerator $urlGen,
-        IDateTimeFormatter $dateFormatter, ITemplateManager $templateManager,
+        IDateTimeFormatter $dateFormatter,
         NoteStorage $notes, TokenStorage $tokens
     ) {
         parent::__construct($appName, $request);
         $this->user            = $userSession->getUser();
         $this->urlGen          = $urlGen;
         $this->dateFormatter   = $dateFormatter;
-        $this->templateManager = $templateManager;
         $this->notes           = $notes;
         $this->tokens          = $tokens;
     }
@@ -294,43 +291,42 @@ class GuiController extends Controller
 
     protected function addNavigation(TemplateResponse $res, $selectedRawtag = null)
     {
-        $nav = $this->templateManager->getTemplate('grauphel', 'appnavigation');
-        $nav->assign('apiroot', $this->getApiRootUrl());
-        $nav->assign('tags', array());
-        $nav->assign('urlGen', $this->urlGen);
-        $nav->assign('loggedIn', $this->user !== null);
-
-        $params = $res->getParams();
-        $params['appNavigation'] = $nav;
-        $res->setParams($params);
-
-        if ($this->user === null) {
-            return;
-        }
-
-        $rawtags = $this->getNotes()->getTags();
-        sort($rawtags);
-        array_unshift(
-            $rawtags,
-            'grauphel:special:all', 'grauphel:special:untagged'
-        );
-
         $tags = array();
-        foreach ($rawtags as $rawtag) {
-            $name = $this->getPrettyTagName($rawtag);
-            if ($name !== false) {
-                $tags[] = array(
-                    'name' => $name,
-                    'id'   => $rawtag,
-                    'href' => $this->urlGen->linkToRoute(
-                        'grauphel.gui.tag',
-                        array('rawtag' => $this->escapeTagForUrl($rawtag))
-                    ),
-                    'selected' => $rawtag == $selectedRawtag,
-                );
+        if ($this->user !== null) {
+            $rawtags = $this->getNotes()->getTags();
+            sort($rawtags);
+            array_unshift(
+                $rawtags,
+                'grauphel:special:all', 'grauphel:special:untagged'
+            );
+
+            foreach ($rawtags as $rawtag) {
+                $name = $this->getPrettyTagName($rawtag);
+                if ($name !== false) {
+                    $tags[] = array(
+                        'name' => $name,
+                        'id'   => $rawtag,
+                        'href' => $this->urlGen->linkToRoute(
+                            'grauphel.gui.tag',
+                            array('rawtag' => $this->escapeTagForUrl($rawtag))
+                        ),
+                        'selected' => $rawtag == $selectedRawtag,
+                    );
+                }
             }
         }
-        $nav->assign('tags', $tags);
+
+        $params = $res->getParams();
+        $params['appNavigation'] = $this->renderPart(
+            'appnavigation',
+            array(
+                'apiroot'  => $this->getApiRootUrl(),
+                'tags'     => $tags,
+                'urlGen'   => $this->urlGen,
+                'loggedIn' => $this->user !== null,
+            )
+        );
+        $res->setParams($params);
     }
 
     protected function addStats(TemplateResponse $res)
@@ -341,15 +337,33 @@ class GuiController extends Controller
 
         $username = $this->user->getUID();
         $notes  = $this->getNotes();
-        $nav = $this->templateManager->getTemplate('grauphel', 'indexStats');
-        $nav->assign('urlGen', $this->urlGen);
-        $nav->assign('notes', count($notes->loadNotesOverview()));
-        $nav->assign('syncrev', $notes->loadSyncData()->latestSyncRevision);
-        $nav->assign('tokens', count($this->tokens->loadForUser($username, 'access')));
-
         $params = $res->getParams();
-        $params['stats'] = $nav;
+        $params['stats'] = $this->renderPart(
+            'indexStats',
+            array(
+                'urlGen'  => $this->urlGen,
+                'notes'   => count($notes->loadNotesOverview()),
+                'syncrev' => $notes->loadSyncData()->latestSyncRevision,
+                'tokens'  => count($this->tokens->loadForUser($username, 'access')),
+            )
+        );
         $res->setParams($params);
+    }
+
+    /**
+     * Render a partial template into a HTML string
+     *
+     * @param string $name   Template name
+     * @param array  $params Template variables
+     *
+     * @return string HTML
+     */
+    protected function renderPart($name, $params)
+    {
+        $part = new TemplateResponse(
+            'grauphel', $name, $params, TemplateResponse::RENDER_AS_BLANK
+        );
+        return $part->render();
     }
 
     protected function getApiRootUrl()

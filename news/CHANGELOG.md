@@ -1,6 +1,6 @@
 ## 1.1.0 - unreleased
 ### Added
-- Compatibility with Nextcloud 32, 33 and 34
+- Compatibility with Nextcloud 30 to 34
 - Database indexes for faster sync
 - Tests in GitHub Actions: lint, Psalm, PHPUnit and an OAuth/sync
   integration test on SQLite, MariaDB and PostgreSQL

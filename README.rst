@@ -83,7 +83,7 @@ Search syntax:
 ============
 Requirements
 ============
-* Nextcloud 32, 33 or 34
+* Nextcloud 30 to 34
 * PHP 8.1 or later (Nextcloud 34 needs PHP 8.2 or later)
 
 Since version 1.1.0 the PHP PECL ``oauth`` extension is no longer needed;
@@ -195,7 +195,7 @@ It needs the PECL ``oauth`` extension *for the test client only*::
       admin:password bob:password
 
 GitHub Actions run all of these, the integration test against
-Nextcloud 32, 33 and 34 with SQLite, MariaDB and PostgreSQL.
+Nextcloud 30 to 34 with SQLite, MariaDB and PostgreSQL.
 
 
 Releasing

@@ -2,7 +2,7 @@
 <?php script('grauphel', 'grauphel'); ?>
 
 <?php /** @var $l OC_L10N */ ?>
-<?php $_['appNavigation']->printPage(); ?>
+<?php print_unescaped($_['appNavigation']); ?>
 
 <div id="app-content" class="list">
   <div id="grauphel-notification" role="status" hidden></div>

@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        server: ['stable32', 'stable33', 'stable34']
+        server: ['stable30', 'stable31', 'stable32', 'stable33', 'stable34']
         database: ['sqlite', 'mysql', 'pgsql']
     name: ${{ matrix.server }} / ${{ matrix.database }}
 
