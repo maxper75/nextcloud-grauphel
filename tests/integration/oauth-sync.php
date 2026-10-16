@@ -113,6 +113,23 @@ function authorize($api, $user, $verbose)
     if ($verbose) {
         check('authorize page', $r['status'] == 200 && strpos($r['body'], 'Test PC') !== false, $r['status']);
         check('authorize page has CSRF token', $csrf !== '');
+
+        //Tomdroid: the redirect to its app scheme must pass form-action
+        $req2 = client()->getRequestToken(
+            $api['oauth_request_token_url'], 'tomdroid://sync'
+        );
+        $r2 = http(
+            'GET',
+            $api['oauth_authorize_url'] . '?oauth_token=' . $req2['oauth_token'],
+            $user
+        );
+        preg_match('/^Content-Security-Policy:.*form-action([^;\r\n]*)/mi', $r2['headers'], $m);
+        $formAction = isset($m[1]) ? trim($m[1]) : '';
+        check(
+            'authorize page allows app scheme callback',
+            strpos(" $formAction ", ' tomdroid: ') !== false,
+            $formAction
+        );
     }
 
     $form = array(

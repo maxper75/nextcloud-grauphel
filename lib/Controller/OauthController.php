@@ -138,8 +138,13 @@ class OauthController extends Controller
             )
         );
 
+        //browsers apply form-action to the redirect after confirm, too
         $csp = new ContentSecurityPolicy();
         $csp->addAllowedFormActionDomain('http://localhost:*');
+        $callbackSource = UrlHelper::getCspSource($token->callback);
+        if ($callbackSource !== null) {
+            $csp->addAllowedFormActionDomain($callbackSource);
+        }
         $res->setContentSecurityPolicy($csp);
 
         return $res;
