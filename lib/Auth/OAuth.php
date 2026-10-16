@@ -296,10 +296,14 @@ class OAuth
                 substr($auth, 6), $matches, PREG_SET_ORDER
             );
             foreach ($matches as $match) {
+                $name = rawurldecode($match[1]);
+                //Tomboy repeats the query parameters in the header;
+                // only protocol parameters belong there (RFC 5849 3.5.1)
+                if (strncmp($name, 'oauth_', 6) != 0) {
+                    continue;
+                }
                 $value = isset($match[3]) ? $match[3] : $match[2];
-                $params[] = array(
-                    rawurldecode($match[1]), rawurldecode($value)
-                );
+                $params[] = array($name, rawurldecode($value));
             }
         }
 

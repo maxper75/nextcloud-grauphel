@@ -84,6 +84,40 @@ function client()
 }
 
 /**
+ * Signed GET like Tomboy's WebSync add-in does it: the query parameters
+ * are signed and sent in the query string and the Authorization header
+ *
+ * @return array Response as returned by http()
+ */
+function tomboyGet($url, $query, $acc)
+{
+    $params = $query + array(
+        'oauth_consumer_key'     => 'anyone',
+        'oauth_nonce'            => (string) mt_rand(123400, 9999999),
+        'oauth_signature_method' => 'HMAC-SHA1',
+        'oauth_timestamp'        => (string) time(),
+        'oauth_token'            => $acc['oauth_token'],
+        'oauth_version'          => '1.0',
+    );
+    ksort($params);
+    $base = 'GET&' . rawurlencode($url) . '&'
+        . rawurlencode(http_build_query($params, '', '&', PHP_QUERY_RFC3986));
+    $params['oauth_signature'] = base64_encode(
+        hash_hmac('sha1', $base, 'anyone&' . $acc['oauth_token_secret'], true)
+    );
+    $header = array();
+    foreach ($params as $name => $value) {
+        $header[] = $name . '="' . urlencode($value) . '"';
+    }
+    return http(
+        'GET', $url . '?' . http_build_query($query), null,
+        array('headers' => array(
+            'Authorization: OAuth realm="' . $url . '",' . implode(',', $header)
+        ))
+    );
+}
+
+/**
  * Run the complete OAuth dance for a user
  *
  * @return array Access token and secret
@@ -229,6 +263,14 @@ try {
         'GET notes?include_notes=true',
         in_array($guid, array_column($notes['notes'], 'guid'))
         && isset($notes['notes'][0]['note-content'])
+    );
+
+    $r = tomboyGet($user['notes-ref']['api-ref'], array('include_notes' => 'true'), $acc);
+    $notes = json_decode($r['body'], true);
+    check(
+        'GET notes, Tomboy style with query parameters in the header',
+        $r['status'] == 200 && in_array($guid, array_column((array) $notes['notes'], 'guid')),
+        (string) $r['status']
     );
 
     $o->fetch($user['notes-ref']['api-ref'], array('since' => (string) $rev));
