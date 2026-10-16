@@ -17,6 +17,8 @@
 - Note titles were not HTML-escaped in the note and notebook pages
 - Plain text (reStructuredText) export failed on PHP 8
 - API requests with another user's access token caused a server error
+- Tomdroid could not finish authorization: the browser blocked the
+  redirect to its tomdroid:// callback
 
 ## 1.0.1 = 2022-01-03
 ### Changed
